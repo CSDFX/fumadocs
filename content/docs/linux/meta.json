@@ -1,0 +1,10 @@
+{
+  "title": "Linux",
+  "description": "Linux",
+  "root": true,
+  "icon": "Building",
+  "pages": [
+    "---Introduction---",
+    "..."
+  ]
+}

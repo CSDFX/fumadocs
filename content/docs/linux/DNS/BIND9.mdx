@@ -1,0 +1,194 @@
+---
+title: BIND9
+---
+
+## 安装并启动 `bind`
+
+第一步是安装软件包：
+
+```
+yum install bind bind-utils
+```
+
+bind 的服务守护进程被命名为named 。启用此功能可在启动时启动：
+
+```
+systemctl enable named
+```
+
+启动named:
+
+```
+systemctl start named
+```
+
+## 配置
+
+在配置任何文件前，请创建原始文件的备份副本
+
+```
+cp /etc/named.conf /etc/named.conf.bak
+```
+
+### CONF 文件
+
+编辑 `named.conf` 文件。你可以替换你喜欢的编辑器。
+
+```
+vi /etc/named.conf
+```
+
+### options
+
+指定监听的 `IPV4/IPV6` 接口：
+
+```bash
+listen-on port 53 { any; };
+listen-on-v6 port 53 { ::1; };
+```
+
+`allow-query` 语句，指定哪些 IP 地址和范围可以查询此 DNS 服务器：
+
+```bash
+allow-query	{ any; };
+```
+
+`allow-recursion` 语句，定义 BIND 接受递归查询的 IP 地址和范围：
+
+```
+allow-recursion { any; };
+```
+
+## 区域配置文件
+
+```
+vi /etc/named.rfc1912.zones
+```
+
+`/etc/named.rfc1912.zones`下有 5 个区域配置模板，区域格式为：
+
+```bash
+zone "<YOUR DNS Domain Name >" {
+	<Configurations>
+}
+```
+
+以及区域的反向格式：
+
+```bash
+zone "<YOUR IP ADDRESS>-addr.arpa" { 
+	<Configurations>
+}
+```
+
+**实例，正向解析主区域（Master）：**
+
+```bash
+zone "skills.com" {
+    type primary;
+    file "/var/named/db.skills";
+    allow-update { none; };
+};
+```
+
+**示例：反向解析主区域**
+
+```bash
+zone "1.168.192.in-addr.arpa" {
+    type primary;
+    file "/var/named/db.192";
+    allow-update { none; };
+};
+```
+
+**示例：从服务器（Slave）**
+
+```bash
+zone "skills.com" {
+    type secondary;
+    file "/var/named/slaves/db.skills";
+    masters { 192.168.1.10; };
+    masterfile-format text;
+};
+```
+
+| 参数 | 说明 |
+|---|---|
+| type | 区域类型（必须）  <br />常见值：  <br />`master`/`primary`：主区域服务器，负责维护和编辑区域数据  <br />`slave`/ `secondary`：从区域服务器，从主服务器同步数据  <br />`forward`：转发区域，将请求转发给其他服务器 |
+| file | 指定区域数据文件路径 |
+| allow-update | 定义是否允许动态更新该区域的数据。常见值：`none` 表示不允许；也可以设定特定的 IP 地址或 ACL |
+| masters | （仅用于 `slave`）主服务器 IP 地址列表，例如：`masters { 192.168.1.10; };` |
+| masterfile-format | 默认值：`text`，以**可读的文本格式**存储 zone 文件（即常见的 `A`、`MX` 等记录，以标准 BIND 格式书写） |
+
+## 区域文件
+
+#### SOA
+
+```
+@ IN SOA @ rname.invalid. (
+    2025080401 ; Serial
+    3600       ; Refresh
+    1800       ; Retry
+    1209600    ; Expire
+    86400 )    ; Minimum TTL
+
+@ IN SOA <主DNS服务器>. <管理员邮箱>. (
+    <序列号>
+    <刷新>
+    <重试>
+    <过期>
+    <最小TTL>
+)
+```
+
+#### Name Server Records
+
+Name Server（NS）记录用于指定负责解析该域的权威 DNS 服务器。在每个 zone 文件中，必须定义主从 DNS 服务器的 NS 记录，并通过 A 记录为这些名称服务器提供对应的 IP 地址。A 记录中的 IP 地址应与实际搭建的 DNS 服务器保持一致，确保域名解析能够正确进行。
+
+```
+    NS    ns.skills.com.
+    A     192.168.100.254
+```
+
+#### Address Records
+
+**A 记录**（Address Record）：将域名映射到 IPv4 地址
+
+```
+<主机名>  IN  A  <IPv4 地址>
+```
+
+**AAAA 记录**：将域名映射到 IPv6 地址
+
+```
+<主机名>  IN  AAAA  <IPv6 地址>
+```
+
+#### Canonical Name Records
+
+**CNAME 记录（Canonical Name Record）用于将一个域名别名（alias）指向另一个**规范域名（canonical name）。
+**格式**
+
+```
+<别名域名>  IN  CNAME  <规范域名>.
+```
+
+**示例**
+
+```
+...
+server	A	192.168.1.1
+www		CNAME	server.skills.com.
+```
+
+#### Pointer Record
+
+PTR（Pointer Record）是 DNS 的**反向解析记录**，用于将 IP 地址映射回对应的主机名。它和 A 记录相反，A 记录是从域名映射到 IP，PTR 则是从 IP 映射到域名。
+
+PTR 记录一般用于反向 DNS 查询（Reverse DNS Lookup），常见于邮件服务器验证、防止垃圾邮件等场景。
+
+**格式**
+
+```
+<IP地址最后一段>  IN  PTR  <主机名>.
+```
