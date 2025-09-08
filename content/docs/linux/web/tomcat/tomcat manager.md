@@ -1,5 +1,5 @@
 ---
-title: tomcat manager
+title: Tomcat Manager
 ---
 
 # Tomcat Manager

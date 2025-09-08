@@ -1,5 +1,5 @@
 ---
-title: dhcp
+title: DHCP
 ---
 
 ## 介绍

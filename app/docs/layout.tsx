@@ -2,8 +2,6 @@ import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { baseOptions } from '@/lib/layout.shared';
 import { source } from '@/lib/source';
 
-import { Book, Terminal, Monitor } from "lucide-react";
-
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
   return (

@@ -1,5 +1,5 @@
 ---
-title: kea-dhcp
+title: KEA-DHCP
 ---
 
 # Kea DHCP

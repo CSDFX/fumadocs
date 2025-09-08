@@ -10,20 +10,17 @@ import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: (
-        <>
-          <svg
-            width="24"
-            height="24"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-label="Logo"
-          >
-            <circle cx={12} cy={12} r={12} fill="currentColor" />
-          </svg>
-          My App
-        </>
-      ),
-    },
+  title: (
+    <div className="flex items-center gap-2">
+      <img
+        src="/docs.jpg"   // 静态资源路径
+        alt="Logo"
+        className="h-6 w-6 rounded"
+      />
+      <span className="font-semibold text-lg">Docs</span>
+    </div>
+  ),
+},
     // see https://fumadocs.dev/docs/ui/navigation/links
     links: [],
   };

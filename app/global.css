@@ -1,3 +1,17 @@
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
+
+:root {
+  --primary-color: hsl(220, 91%, 54%);
+  --secondary-color: hsl(250, 80%, 54%);
+  --background-color: #ffffff;
+  --text-color: #111827;
+}
+
+.dark {
+  --primary-color: hsl(217, 92%, 76%);
+  --secondary-color: hsl(250, 100%, 80%);
+  --background-color: #111827;
+  --text-color: #f9fafb;
+}

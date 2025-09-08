@@ -4,7 +4,20 @@
   "root": true,
   "icon": "Building",
   "pages": [
-    "---Introduction---",
+    "---介绍---",
+    "./index.mdx",
+    "系统概述.md",
+    "---Editors---",
+    "...editors",
+    "---Network---",
+    "...network",
+    "---Package mangement---",
+    "...package mangement",
+    "---Security---",
+    "...security",
+    "---Web---",
+    "...web",
+    "---Other---",
     "..."
   ]
 }

@@ -1,5 +1,5 @@
 ---
-title: 配置tomcat站点
+title: 配置Tomcat站点
 ---
 
 # 配置Tomcat站点
