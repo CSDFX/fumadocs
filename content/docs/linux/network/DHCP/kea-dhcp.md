@@ -15,7 +15,7 @@ dhcp6=no
 "interfaces": [ 'ens160' ]
 ```
 ##### 地址池
-``` json
+``` json title="kea-dhcp4.conf"
 {
             "subnet": "192.0.2.0/24",
             "pools": [ { "pool": "192.0.2.1 - 192.0.2.200" } ],
